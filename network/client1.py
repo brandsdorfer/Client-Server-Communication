@@ -15,7 +15,7 @@ def main():
         msg = input("Enter the message to be sent to the server : ")
         client_socket.send(msg.encode())
         
-        if msg == "stop":
+        if msg == "stop" or msg == "exit":
            break
 
         try:

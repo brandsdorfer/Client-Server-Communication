@@ -3,7 +3,10 @@ import os
 
 FILENAME = "./connection.txt"
 TIME_LIMIT_SEC = 60 # seconds
-    
+
+# an unique identifier for each client
+UNIQUE_NUM =  len(open(FILENAME, 'r').readlines()) if os.path.exists(FILENAME) else 0
+
 def check_timeout(timestart):
     # chek if timeout is reached
     return (time.time() - timestart)  > TIME_LIMIT_SEC
@@ -27,9 +30,9 @@ def nain():
             raise SystemExit("you exit now the client")
         
         # Open the connection file in write mode to send a message to the server
-        with open(FILENAME, 'w') as f:
+        with open(FILENAME, 'a') as f:
             # Write the message to the file with a prefix 'C:' to indicate it's from the client
-            f.write(f"C: {msg}")
+            f.write(f"C: {msg}\n")
 
         # Initialize the response variable with a default value indicating that the response is from the client
         res = "C"
@@ -44,11 +47,17 @@ def nain():
             try:
                 # Open the connection file in read mode to receive a response from the server
                 with open(FILENAME, "r") as serverfile:
-                    res = serverfile.read()
+                    data = serverfile.readlines()
+
+                if  data[UNIQUE_NUM][0] == "S":
+                        res = data[UNIQUE_NUM]
+                        break
+
             except PermissionError:
                 # Change the permissions of the file to allow read and write access
                 os.chmod(FILENAME, 0o770)
                 continue
+            
             
 
             # Check if the timeout is reached
